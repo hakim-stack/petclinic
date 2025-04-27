@@ -1,7 +1,0 @@
-/home/hakim/projetpetclinicdockercompose/spring-petclinic-vets-service/src/main/java/org/springframework/samples/petclinic/vets/model/Specialty.java
-/home/hakim/projetpetclinicdockercompose/spring-petclinic-vets-service/src/main/java/org/springframework/samples/petclinic/vets/system/CacheConfig.java
-/home/hakim/projetpetclinicdockercompose/spring-petclinic-vets-service/src/main/java/org/springframework/samples/petclinic/vets/model/VetRepository.java
-/home/hakim/projetpetclinicdockercompose/spring-petclinic-vets-service/src/main/java/org/springframework/samples/petclinic/vets/system/VetsProperties.java
-/home/hakim/projetpetclinicdockercompose/spring-petclinic-vets-service/src/main/java/org/springframework/samples/petclinic/vets/model/Vet.java
-/home/hakim/projetpetclinicdockercompose/spring-petclinic-vets-service/src/main/java/org/springframework/samples/petclinic/vets/VetsServiceApplication.java
-/home/hakim/projetpetclinicdockercompose/spring-petclinic-vets-service/src/main/java/org/springframework/samples/petclinic/vets/web/VetResource.java
