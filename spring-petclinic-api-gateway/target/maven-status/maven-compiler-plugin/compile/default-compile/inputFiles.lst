@@ -1,0 +1,9 @@
+/home/hakim/projetpetclinicdockercompose/spring-petclinic-api-gateway/src/main/java/org/springframework/samples/petclinic/api/application/CustomersServiceClient.java
+/home/hakim/projetpetclinicdockercompose/spring-petclinic-api-gateway/src/main/java/org/springframework/samples/petclinic/api/dto/OwnerDetails.java
+/home/hakim/projetpetclinicdockercompose/spring-petclinic-api-gateway/src/main/java/org/springframework/samples/petclinic/api/dto/Visits.java
+/home/hakim/projetpetclinicdockercompose/spring-petclinic-api-gateway/src/main/java/org/springframework/samples/petclinic/api/dto/VisitDetails.java
+/home/hakim/projetpetclinicdockercompose/spring-petclinic-api-gateway/src/main/java/org/springframework/samples/petclinic/api/dto/PetType.java
+/home/hakim/projetpetclinicdockercompose/spring-petclinic-api-gateway/src/main/java/org/springframework/samples/petclinic/api/application/VisitsServiceClient.java
+/home/hakim/projetpetclinicdockercompose/spring-petclinic-api-gateway/src/main/java/org/springframework/samples/petclinic/api/ApiGatewayApplication.java
+/home/hakim/projetpetclinicdockercompose/spring-petclinic-api-gateway/src/main/java/org/springframework/samples/petclinic/api/boundary/web/ApiGatewayController.java
+/home/hakim/projetpetclinicdockercompose/spring-petclinic-api-gateway/src/main/java/org/springframework/samples/petclinic/api/dto/PetDetails.java

@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: discovery-server
+  name: discovery-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: discovery-server
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: discovery-server
+    spec:
+      containers:
+        - image: registry.dev.svc.cluster.local:5000/discovery-server
+          name: discovery-server
+          ports:
+            - containerPort: 8761
+          resources:
+            limits:
+              memory: "536870912"
+      initContainers:
+      - name: init-config-server
+        image: busybox
+        command: ['sh', '-c', 'until nc -z config-server:8888; do echo waiting for config-server; sleep 2; done;']
+      restartPolicy: Always

@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: config-server
+  name: config-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: config-server
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: config-server
+    spec:
+      containers:
+        - image: registry.dev.svc.cluster.local:5000/config-server
+          name: config-server
+          ports:
+            - containerPort: 8888
+          resources:
+            limits:
+              memory: "536870912"
+      restartPolicy: Always

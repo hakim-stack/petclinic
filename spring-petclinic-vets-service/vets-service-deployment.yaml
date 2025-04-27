@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: vets-service
+  name: vets-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vets-service
+  template:
+    metadata:
+      labels:
+        app: vets-service
+    spec:
+      containers:
+        - image: registry.dev.svc.cluster.local:5000/vets-service
+          name: vets-service
+          ports:
+            - containerPort: 8082
+          resources:
+            limits:
+              memory: "536870912"
+      initContainers:
+      - name: init-discovery-server
+        image: busybox
+        command: ['sh', '-c', 'until nc -z discovery-server:8761; do echo waiting for discovery-server; sleep 2; done;']
+      restartPolicy: Always

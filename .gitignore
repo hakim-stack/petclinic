@@ -1,0 +1,10 @@
+# Ignorer tous les fichiers Terraform initiaux
+.terraform/
+terraform.tfstate
+terraform.tfstate.backup
+*.tfstate
+*.tfstate.backup
+
+# Ignorer aussi les fichiers d'authentification AWS éventuels
+*.pem
+*.key
