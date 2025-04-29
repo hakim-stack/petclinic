@@ -1,0 +1,16 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      java: corretto11
+    commands:
+      - echo "🔧 Début de l'installation"
+      - mvn --version
+      - echo "Connexion à ECR"
+      - aws ecr get-login-password --region eu-west-3 | docker login --username AWS --password-stdin 116981792309.dkr.ecr.eu-west-3.amazonaws.com
+  build:
+    commands:
+      - echo "🔨 Compilation et Dockerisation de chaque microservice"
+      - chmod +x push-ecr.sh
+      - ./push-ecr.sh
