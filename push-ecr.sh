@@ -12,13 +12,13 @@ aws ecr get-login-password --region $REGION | docker login --username AWS --pass
 
 # Liste des services à builder et à push
 SERVICES=(
-  admin-server
-  api-gateway
   config-server
-  customers-service
   discovery-server
+  admin-server
+  customers-service
   vets-service
   visits-service
+  api-gateway
 )
 
 # Processus de compilation, build et push
@@ -26,15 +26,21 @@ for service in "${SERVICES[@]}"; do
   echo "🔧 Compilation de $service..."
   cd spring-petclinic-$service || exit
   mvn clean install
+  JAR_FILE=target/spring-petclinic-$service-3.0.2.jar
+  if [ ! -f "$JAR_FILE" ]; then
+    echo "❌ Le fichier $JAR_FILE n'existe pas. Échec de la compilation de $service."
+    exit 1
+  fi
+
 
   echo "🐳 Construction de l'image Docker pour $service..."
   docker build -t $REPO_NAME:$service .
 
   echo "🏷️ Tagging de l'image Docker..."
-  docker tag $REPO_NAME:$service $ECR_URL:$service
+  docker tag $REPO_NAME:$service $ECR_URL:$service:latest
 
   echo "📤 Push de l'image vers ECR..."
-  docker push $ECR_URL:$service
+  docker push $ECR_URL:$service:latest
 
   cd ..
   echo "✅ $service terminé"
