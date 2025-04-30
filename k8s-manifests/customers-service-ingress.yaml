@@ -1,0 +1,27 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+  name: customers-service-ingress
+  labels:
+    app: customers-service
+spec:
+  rules:
+  - host: hello-world1.info
+    http:
+      paths:
+      - pathType: ImplementationSpecific
+        path: /api/gateway(/|$)(.*)
+        backend:
+          service:
+            name: customers-service
+            port:
+              number: 8081
+      - pathType: ImplementationSpecific
+        path: /api/customer(/|$)(.*)
+        backend:
+          service:
+            name: customers-service
+            port:
+              number: 8081

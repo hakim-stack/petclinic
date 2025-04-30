@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: customers-service
+  name: customers-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: customers-service
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: customers-service
+    spec:
+      containers:
+        - image: 116981792309.dkr.ecr.eu-west-3.amazonaws.com/petclinic:customers-service
+          name: customers-service
+          ports:
+            - containerPort: 8081
+          resources:
+            limits:
+              memory: "536870912"
+      initContainers:
+      - name: init-discovery-server
+        image: busybox
+        command: ['sh', '-c', 'until nc -z discovery-server:8761; do echo waiting for discovery-server; sleep 2; done;']
+      restartPolicy: Always
