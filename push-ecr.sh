@@ -37,10 +37,10 @@ for service in "${SERVICES[@]}"; do
   docker build -t $REPO_NAME:$service .
 
   echo "🏷️ Tagging de l'image Docker..."
-  docker tag $REPO_NAME:$service $ECR_URL:$service:latest
+  docker tag $REPO_NAME:$service $ECR_URL:$service
 
   echo "📤 Push de l'image vers ECR..."
-  docker push $ECR_URL:$service:latest
+  docker push $ECR_URL:$service
 
   cd ..
   echo "✅ $service terminé"
