@@ -1,0 +1,19 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      docker: 20
+    commands:
+      - echo "🔧 Installation de kubectl et configuration de l'accès au cluster"
+      - curl -o kubectl https://s3.us-west-2.amazonaws.com/amazon-eks/1.27.16/2024-03-20/bin/linux/amd64/kubectl
+      - chmod +x ./kubectl
+      - mv ./kubectl /usr/local/bin/
+      - aws eks --region eu-west-3 update-kubeconfig --name petclinic-eks
+  build:
+    commands:
+      - echo "🚀 Déploiement des ressources Kubernetes"
+      - kubectl apply -f k8s-manifests/ -n petclinic
+artifacts:
+  files:
+    - '**/*'
