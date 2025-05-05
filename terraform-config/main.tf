@@ -61,6 +61,11 @@ resource "aws_route_table_association" "subnet_2_association" {
   route_table_id = aws_route_table.route_table.id
 }
 
+# 👇 Récupération d'une clé KMS existante (à la place de la créer)
+data "aws_kms_alias" "eks" {
+  name = "alias/eks/petclinic-eks"
+}
+
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
   version = "~> 19.0"
@@ -73,6 +78,16 @@ module "eks" {
   vpc_id                   = aws_vpc.main.id
   subnet_ids               = [aws_subnet.subnet_1.id, aws_subnet.subnet_2.id]
   control_plane_subnet_ids = [aws_subnet.subnet_1.id, aws_subnet.subnet_2.id]
+
+  # ✅ on réutilise la clé existante au lieu de la recréer
+  create_kms_key = false
+  cluster_encryption_config = {
+    resources        = ["secrets"]
+    provider_key_arn = data.aws_kms_alias.eks.target_key_id
+  }
+
+  # ✅ on empêche la création automatique du log group
+  cluster_enabled_log_types = []
 
   eks_managed_node_groups = {
     default_node_group = {
@@ -89,3 +104,4 @@ module "eks" {
     Project     = var.project_name
   }
 }
+
