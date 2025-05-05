@@ -77,8 +77,9 @@ module "eks" {
   # ✅ Empêche la création du log group
   cluster_enabled_log_types = []
 
-  # ✅ Désactive la création automatique de la clé KMS
-  create_kms_key = false
+  # ✅ Désactive totalement le chiffrement KMS
+  create_kms_key             = false
+  cluster_encryption_config  = null
 
   eks_managed_node_groups = {
     default_node_group = {
