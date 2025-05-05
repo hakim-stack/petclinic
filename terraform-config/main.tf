@@ -81,7 +81,7 @@ module "eks" {
 
   # ✅ On recrée une clé KMS propre (pas d'utilisation de data)
   create_kms_key = true
-  kms_key_alias  = "eks/${var.project_name}-eks-v2"  # 🔁 on change l'alias
+  kms_key_alias  = ["eks/${var.project_name}-eks-v2]"  # 🔁 on change l'alias
 
   cluster_encryption_config = {
     resources = ["secrets"]
