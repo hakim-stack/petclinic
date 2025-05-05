@@ -79,7 +79,7 @@ module "eks" {
 
   # ✅ Désactive totalement le chiffrement KMS
   create_kms_key             = false
-  cluster_encryption_config  = null
+  cluster_encryption_config  = {}
 
   eks_managed_node_groups = {
     default_node_group = {
