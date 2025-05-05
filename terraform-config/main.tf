@@ -74,8 +74,11 @@ module "eks" {
   subnet_ids               = [aws_subnet.subnet_1.id, aws_subnet.subnet_2.id]
   control_plane_subnet_ids = [aws_subnet.subnet_1.id, aws_subnet.subnet_2.id]
 
-  # ✅ On empêche juste la création des logs EKS pour éviter les conflits
+  # ✅ Empêche la création du log group
   cluster_enabled_log_types = []
+
+  # ✅ Désactive la création automatique de la clé KMS
+  create_kms_key = false
 
   eks_managed_node_groups = {
     default_node_group = {
@@ -91,4 +94,3 @@ module "eks" {
     Project     = var.project_name
   }
 }
-
