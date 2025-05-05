@@ -79,24 +79,24 @@ module "eks" {
   subnet_ids               = [aws_subnet.subnet_1.id, aws_subnet.subnet_2.id]
   control_plane_subnet_ids = [aws_subnet.subnet_1.id, aws_subnet.subnet_2.id]
 
-  # ✅ On recrée une clé KMS propre (pas d'utilisation de data)
-  create_kms_key = true
-  kms_key_aliases = ["eks/${var.project_name}-eks-v2]"  
+  # ✅ Création d’une nouvelle clé KMS avec alias propre
+  create_kms_key  = true
+  kms_key_aliases = ["eks/${var.project_name}-eks-v2"]
 
+  # ✅ Configuration du chiffrement
   cluster_encryption_config = {
     resources = ["secrets"]
   }
 
-  # ✅ on empêche la création automatique du log group
+  # ✅ Empêcher la création du log group (pour éviter conflits)
   cluster_enabled_log_types = []
 
   eks_managed_node_groups = {
     default_node_group = {
-      desired_size = 2
-      max_size     = 3
-      min_size     = 1
-
-      instance_types = ["t3.medium"]
+      desired_size    = 2
+      max_size        = 3
+      min_size        = 1
+      instance_types  = ["t3.medium"]
     }
   }
 
@@ -105,4 +105,3 @@ module "eks" {
     Project     = var.project_name
   }
 }
-
