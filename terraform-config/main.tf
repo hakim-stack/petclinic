@@ -79,11 +79,12 @@ module "eks" {
   subnet_ids               = [aws_subnet.subnet_1.id, aws_subnet.subnet_2.id]
   control_plane_subnet_ids = [aws_subnet.subnet_1.id, aws_subnet.subnet_2.id]
 
-  # ✅ on réutilise la clé existante au lieu de la recréer
-  create_kms_key = false
+  # ✅ On recrée une clé KMS propre (pas d'utilisation de data)
+  create_kms_key = true
+  kms_key_alias  = "eks/${var.project_name}-eks-v2"  # 🔁 on change l'alias
+
   cluster_encryption_config = {
-    resources        = ["secrets"]
-    provider_key_arn = data.aws_kms_alias.eks.target_key_id
+    resources = ["secrets"]
   }
 
   # ✅ on empêche la création automatique du log group
