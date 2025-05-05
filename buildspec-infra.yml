@@ -12,7 +12,7 @@ phases:
     commands:
       - echo "🔐 Connexion à AWS ECR pour récupérer les permissions"
       - aws sts get-caller-identity
-      - cd terraform
+      - cd terraform-config
   build:
     commands:
       - echo "⚙️ Initialisation de Terraform..."
