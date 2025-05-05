@@ -61,11 +61,6 @@ resource "aws_route_table_association" "subnet_2_association" {
   route_table_id = aws_route_table.route_table.id
 }
 
-# 👇 Récupération d'une clé KMS existante (à la place de la créer)
-data "aws_kms_alias" "eks" {
-  name = "alias/eks/petclinic-eks"
-}
-
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
   version = "~> 19.0"
