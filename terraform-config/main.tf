@@ -74,15 +74,6 @@ module "eks" {
   subnet_ids               = [aws_subnet.subnet_1.id, aws_subnet.subnet_2.id]
   control_plane_subnet_ids = [aws_subnet.subnet_1.id, aws_subnet.subnet_2.id]
 
-  # ✅ Création d’une nouvelle clé KMS avec alias propre
-  create_kms_key  = true
-  kms_key_aliases = ["eks/${var.project_name}-eks-v3"]
-
-  # ✅ Configuration du chiffrement
-  cluster_encryption_config = {
-    resources = ["secrets"]
-  }
-
   # ✅ Empêcher la création du log group (pour éviter conflits)
   cluster_enabled_log_types = []
 
