@@ -74,8 +74,11 @@ module "eks" {
   subnet_ids               = [aws_subnet.subnet_1.id, aws_subnet.subnet_2.id]
   control_plane_subnet_ids = [aws_subnet.subnet_1.id, aws_subnet.subnet_2.id]
 
-  # ✅ Empêcher la création du log group (pour éviter conflits)
+  # ✅ Empêche la création du log group
   cluster_enabled_log_types = []
+
+  # ✅ Désactive totalement le chiffrement avec KMS
+  enable_cluster_encryption = false
 
   eks_managed_node_groups = {
     default_node_group = {
@@ -91,3 +94,4 @@ module "eks" {
     Project     = var.project_name
   }
 }
+
