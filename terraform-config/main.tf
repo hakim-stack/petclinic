@@ -76,7 +76,7 @@ module "eks" {
 
   # ✅ Création d’une nouvelle clé KMS avec alias propre
   create_kms_key  = true
-  kms_key_aliases = ["eks/${var.project_name}-eks-v2"]
+  kms_key_aliases = ["eks/${var.project_name}-eks-v3"]
 
   # ✅ Configuration du chiffrement
   cluster_encryption_config = {
