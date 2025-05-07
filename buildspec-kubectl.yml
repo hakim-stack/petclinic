@@ -3,16 +3,13 @@ version: 0.2
 phases:
   install:
     commands:
-      - echo "🔧 Installation de kubectl et configuration de l'accès au cluster"
-      - curl -LO "https://s3.us-west-2.amazonaws.com/amazon-eks/1.27.16/2024-03-20/bin/linux/amd64/kubectl"
-      - chmod +x kubectl
-      - mv kubectl /usr/local/bin/
-      - kubectl version --client
+      - echo "🔧 Configuration de l'accès au cluster"
       - aws eks --region eu-west-3 update-kubeconfig --name petclinic-eks
 
   build:
     commands:
       - echo "🚀 Déploiement des ressources Kubernetes"
+      - kubectl version --client
       - kubectl apply -f k8s-manifests/ -n petclinic
       - echo "🌐 Vérification de l'Ingress"
       - kubectl get ingress -n petclinic
