@@ -8,12 +8,13 @@ phases:
 
   build:
     commands:
+      - echo "🚀 Création du namespace si besoin"
+      - kubectl create namespace petclinic || echo "Namespace petclinic existe déjà"
       - echo "🚀 Déploiement des ressources Kubernetes"
-      - kubectl version --client
       - kubectl apply -f k8s-manifests/ -n petclinic
       - echo "🌐 Vérification de l'Ingress"
       - kubectl get ingress -n petclinic
-      - echo "📡 Adresse IP publique du contrôleur Ingress :"
+      - echo "📡 Adresse IP publique de l'Ingress :"
       - kubectl get svc ingress-nginx-controller -n ingress-nginx -o jsonpath='{.status.loadBalancer.ingress[0].hostname}'
 
 artifacts:
