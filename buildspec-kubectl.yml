@@ -4,7 +4,7 @@ phases:
   install:
     commands:
       - echo "🔧 Installation de kubectl et configuration de l'accès au cluster"
-      - curl -LO https://amazon-eks.s3.eu-west-3.amazonaws.com/1.27.16/2024-03-20/bin/linux/amd64/kubectl
+      - curl -LO "https://s3.us-west-2.amazonaws.com/amazon-eks/1.27.16/2024-03-20/bin/linux/amd64/kubectl"
       - chmod +x kubectl
       - mv kubectl /usr/local/bin/
       - kubectl version --client
