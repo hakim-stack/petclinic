@@ -8,8 +8,6 @@ env:
 
 phases:
   install:
-    runtime-versions:
-      docker: 18
     commands:
       - echo "🔧 Installation de kubectl et aws-cli"
       - curl -o kubectl https://s3.us-west-2.amazonaws.com/amazon-eks/1.21.14/2024-09-11/bin/linux/amd64/kubectl
