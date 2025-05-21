@@ -18,4 +18,4 @@ spec:
               service:
                 name: vets-service
                 port:
-                  number: 8082
+                  number: 8083
