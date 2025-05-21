@@ -81,12 +81,30 @@ module "eks" {
 
   eks_managed_node_groups = {
     default_node_group = {
-      desired_size    = 2
-      max_size        = 3
-      min_size        = 1
-      instance_types  = ["t3.medium"]
+      desired_size   = 2
+      max_size       = 3
+      min_size       = 1
+      instance_types = ["t3.medium"]
     }
   }
+
+  manage_aws_auth_configmap = true
+
+  aws_auth_users = [
+    {
+      userarn  = "arn:aws:iam::116981792309:user/hakim"
+      username = "hakim"
+      groups   = ["system:masters"]
+    }
+  ]
+
+  aws_auth_roles = [
+    {
+      rolearn  = "arn:aws:iam::116981792309:role/build-kubectl-role"
+      username = "build"
+      groups   = ["system:masters"]
+    }
+  ]
 
   tags = {
     Environment = "dev"
