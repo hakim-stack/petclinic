@@ -4,32 +4,22 @@ env:
   variables:
     CLUSTER_NAME: "petclinic-eks"
     REGION: "eu-west-3"
-    ROLE_ARN: "arn:aws:iam::116981792309:role/kubectl-role"
 
 phases:
   install:
     commands:
-      - echo "🔧 Installation de kubectl et aws-cli"
-      - curl -o kubectl https://s3.us-west-2.amazonaws.com/amazon-eks/1.21.14/2024-09-11/bin/linux/amd64/kubectl
-      - chmod +x kubectl && mv kubectl /usr/local/bin
-      - curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-      - unzip -q awscliv2.zip && ./aws/install
+      - echo "🔧 Installation de kubectl"
+      - curl -o kubectl https://s3.us-west-2.amazonaws.com/amazon-eks/1.27.16/2024-09-11/bin/linux/amd64/kubectl
+      - chmod +x kubectl && mv kubectl /usr/local/bin/kubectl
+      - echo "✅ kubectl installé"
 
   pre_build:
     commands:
       - echo "📡 Connexion au cluster"
       - aws eks update-kubeconfig --region $REGION --name $CLUSTER_NAME
 
-      - echo "🔐 Vérification et ajout du rôle kubectl-role dans aws-auth si absent"
-      - kubectl get configmap aws-auth -n kube-system -o yaml > aws-auth.yaml
-      - |
-        if ! grep -q "$ROLE_ARN" aws-auth.yaml; then
-          echo "🛠️ Ajout du rôle dans aws-auth"
-          awk '/mapRoles:/{print;print "- rolearn: '"$ROLE_ARN"'"; print "  username: build"; print "  groups:"; print "    - system:masters"; next}1' aws-auth.yaml > new-aws-auth.yaml
-          kubectl apply -f new-aws-auth.yaml -n kube-system
-        else
-          echo "✅ Rôle déjà présent dans aws-auth"
-        fi
+      - echo "🔐 Vérification des accès kubectl"
+      - kubectl get nodes || { echo "❌ Échec de l'accès au cluster EKS. Vérifiez les permissions IAM."; exit 1; }
 
   build:
     commands:
