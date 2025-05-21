@@ -8,8 +8,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-    - host: hello-world1.info
-      http:
+    - http:
         paths:
         - pathType: Prefix
           path: /
@@ -18,4 +17,3 @@ spec:
               name: api-gateway
               port:
                 number: 8080
-
