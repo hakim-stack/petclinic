@@ -25,12 +25,25 @@ phases:
     commands:
       - echo "🚀 Création du namespace si besoin"
       - kubectl create namespace petclinic || echo "Namespace petclinic existe déjà"
+
+      - echo "📥 Déploiement du contrôleur Ingress NGINX si absent"
+      - |
+        if ! kubectl get ns ingress-nginx >/dev/null 2>&1; then
+          kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.9.5/deploy/static/provider/aws/deploy.yaml
+          echo "⏳ Attente que le contrôleur soit prêt..."
+          kubectl rollout status deployment ingress-nginx-controller -n ingress-nginx --timeout=120s
+        else
+          echo "✅ Contrôleur Ingress NGINX déjà présent"
+        fi
+
       - echo "🚀 Déploiement des ressources Kubernetes"
       - kubectl apply -f k8s-manifests/ -n petclinic
+
       - echo "🌐 Vérification de l'Ingress"
       - kubectl get ingress -n petclinic
+
       - echo "📡 Adresse IP publique de l'Ingress :"
-      - kubectl get svc ingress-nginx-controller -n ingress-nginx -o jsonpath='{.status.loadBalancer.ingress[0].hostname}'
+      - kubectl get svc ingress-nginx-controller -n ingress-nginx -o jsonpath='{.status.loadBalancer.ingress[0].hostname}' || echo "⚠️ LoadBalancer pas encore prêt"
 
 artifacts:
   files:
