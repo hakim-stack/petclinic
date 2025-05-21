@@ -17,6 +17,17 @@ terraform {
   required_version = ">= 1.3.0"
 }
 
+# ➕ Datasources pour extraire infos du cluster EKS
+data "aws_eks_cluster" "cluster" {
+  name       = module.eks.cluster_name
+  depends_on = [module.eks]
+}
+
+data "aws_eks_cluster_auth" "cluster" {
+  name       = module.eks.cluster_name
+  depends_on = [module.eks]
+}
+
 # ➕ Provider Kubernetes pour gérer aws-auth ConfigMap
 provider "kubernetes" {
   host                   = module.eks.cluster_endpoint
@@ -24,11 +35,3 @@ provider "kubernetes" {
   token                  = data.aws_eks_cluster_auth.cluster.token
 }
 
-# ➕ Datasources pour extraire infos du cluster
-data "aws_eks_cluster" "cluster" {
-  name = module.eks.cluster_name
-}
-
-data "aws_eks_cluster_auth" "cluster" {
-  name = module.eks.cluster_name
-}
