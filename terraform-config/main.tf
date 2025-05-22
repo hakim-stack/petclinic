@@ -61,31 +61,45 @@ resource "aws_route_table_association" "subnet_2_association" {
   route_table_id = aws_route_table.route_table.id
 }
 
-module "eks" {
-  source  = "terraform-aws-modules/eks/aws"
-  version = "~> 19.0"
+# Le module EKS est supprimé car il ne supporte pas access_config
+# On utilisera une configuration native plus bas
 
-  cluster_name    = "${var.project_name}-eks"
-  cluster_version = "1.27"
+resource "aws_iam_role" "eks_cluster_role" {
+  name = "eksClusterRole"
 
-  cluster_endpoint_public_access = true
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [{
+      Action    = "sts:AssumeRole",
+      Effect    = "Allow",
+      Principal = {
+        Service = "eks.amazonaws.com"
+      }
+    }]
+  })
 
-  vpc_id                   = aws_vpc.main.id
-  subnet_ids               = [aws_subnet.subnet_1.id, aws_subnet.subnet_2.id]
-  control_plane_subnet_ids = [aws_subnet.subnet_1.id, aws_subnet.subnet_2.id]
+  tags = {
+    Name = "eks-cluster-role"
+  }
+}
 
-  cluster_enabled_log_types      = []
-  create_cloudwatch_log_group    = false
-  create_kms_key                 = false
-  cluster_encryption_config      = {}
+resource "aws_iam_role_policy_attachment" "eks_cluster_role_policy" {
+  role       = aws_iam_role.eks_cluster_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
+}
 
-  eks_managed_node_groups = {
-    default_node_group = {
-      desired_size   = 2
-      max_size       = 3
-      min_size       = 1
-      instance_types = ["t3.medium"]
-    }
+resource "aws_eks_cluster" "this" {
+  name     = "${var.project_name}-eks"
+  role_arn = aws_iam_role.eks_cluster_role.arn
+  version  = "1.27"
+
+  vpc_config {
+    subnet_ids = [aws_subnet.subnet_1.id, aws_subnet.subnet_2.id]
+  }
+
+  access_config {
+    authentication_mode                        = "API_AND_CONFIG_MAP"
+    bootstrap_cluster_creator_admin_permissions = true
   }
 
   tags = {
@@ -95,13 +109,13 @@ module "eks" {
 }
 
 resource "aws_eks_access_entry" "build_role_entry" {
-  cluster_name  = module.eks.cluster_name
+  cluster_name  = aws_eks_cluster.this.name
   principal_arn = "arn:aws:iam::116981792309:role/build-kubectl-role"
   type          = "STANDARD"
 }
 
 resource "aws_eks_access_policy_association" "build_admin_access" {
-  cluster_name  = module.eks.cluster_name
+  cluster_name  = aws_eks_cluster.this.name
   principal_arn = "arn:aws:iam::116981792309:role/build-kubectl-role"
   policy_arn    = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
 
@@ -111,4 +125,3 @@ resource "aws_eks_access_policy_association" "build_admin_access" {
 
   depends_on = [aws_eks_access_entry.build_role_entry]
 }
-
