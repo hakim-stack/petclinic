@@ -30,11 +30,24 @@ phases:
       - |
         if ! kubectl get ns ingress-nginx >/dev/null 2>&1; then
           kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.9.5/deploy/static/provider/aws/deploy.yaml
-          echo "⏳ Attente que le contrôleur soit prêt..."
-          kubectl rollout status deployment ingress-nginx-controller -n ingress-nginx --timeout=600s
+          echo "⏳ Attente que le contrôleur soit prêt (rollout)..."
+          kubectl rollout status deployment ingress-nginx-controller -n ingress-nginx --timeout=600s || echo "⚠️ Déploiement Ingress NGINX long ou déjà prêt"
         else
           echo "✅ Contrôleur Ingress NGINX déjà présent"
         fi
+
+      # --- ATTENTE WEBHOOK ADMISSION AVANT LES INGRESSES ---
+      - |
+        echo "⏳ Attente que le webhook d'admission soit prêt..."
+        for i in {1..30}; do
+          READY=$(kubectl get endpoints -n ingress-nginx ingress-nginx-controller-admission -o jsonpath='{.subsets[*].addresses[*].ip}')
+          if [ -n "$READY" ]; then
+            echo "✅ Webhook d'admission prêt !"
+            break
+          fi
+          echo "⏳ En attente... ($i/30)"
+          sleep 10
+        done
 
       - echo "🚀 Déploiement des ressources Kubernetes"
       - kubectl apply -f k8s-manifests/ -n petclinic
@@ -48,3 +61,4 @@ phases:
 artifacts:
   files:
     - '**/*'
+
