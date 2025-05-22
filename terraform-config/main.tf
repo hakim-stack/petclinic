@@ -155,6 +155,7 @@ resource "aws_eks_access_policy_association" "build_admin_access" {
 
 resource "aws_iam_openid_connect_provider" "oidc_provider" {
   client_id_list  = ["sts.amazonaws.com"]
-  thumbprint_list = [aws_eks_cluster.this.certificate_authority.0.data]
-  url             = aws_eks_cluster.this.identity.0.oidc.0.issuer
+  thumbprint_list = ["9e99a48a9960b14926bb7f3b02e22da0afd40b58"]
+  url             = aws_eks_cluster.this.identity[0].oidc[0].issuer
 }
+
