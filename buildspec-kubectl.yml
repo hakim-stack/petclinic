@@ -31,7 +31,7 @@ phases:
         if ! kubectl get ns ingress-nginx >/dev/null 2>&1; then
           kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.9.5/deploy/static/provider/aws/deploy.yaml
           echo "⏳ Attente que le contrôleur soit prêt..."
-          kubectl rollout status deployment ingress-nginx-controller -n ingress-nginx --timeout=300s
+          kubectl rollout status deployment ingress-nginx-controller -n ingress-nginx --timeout=600s
         else
           echo "✅ Contrôleur Ingress NGINX déjà présent"
         fi
