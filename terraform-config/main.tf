@@ -94,13 +94,6 @@ module "eks" {
   }
 }
 
-resource "aws_iam_role_policy_attachment" "build_kubectl_admin_policy" {
-  role       = "build-kubectl-role"
-  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSClusterAdminPolicy"
-
-  depends_on = [module.eks]
-}
-
 resource "aws_eks_access_entry" "build_role_entry" {
   cluster_name  = module.eks.cluster_name
   principal_arn = "arn:aws:iam::116981792309:role/build-kubectl-role"
@@ -118,3 +111,4 @@ resource "aws_eks_access_policy_association" "build_admin_access" {
 
   depends_on = [aws_eks_access_entry.build_role_entry]
 }
+
