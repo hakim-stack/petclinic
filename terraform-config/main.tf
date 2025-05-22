@@ -79,18 +79,6 @@ module "eks" {
   create_kms_key                 = false
   cluster_encryption_config      = {}
 
-  access_config {
-    authentication_mode = "API_AND_CONFIG_MAP"
-    bootstrap_cluster_creator_admin_permissions = true
-    additional_iam_roles = [
-      {
-        role_arn = "arn:aws:iam::116981792309:role/build-kubectl-role"
-        username = "build"
-        groups   = ["system:masters"]
-      }
-    ]
-  }
-
   eks_managed_node_groups = {
     default_node_group = {
       desired_size   = 2
@@ -111,4 +99,22 @@ resource "aws_iam_role_policy_attachment" "build_kubectl_admin_policy" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSClusterAdminPolicy"
 
   depends_on = [module.eks]
+}
+
+resource "aws_eks_access_entry" "build_role_entry" {
+  cluster_name  = module.eks.cluster_name
+  principal_arn = "arn:aws:iam::116981792309:role/build-kubectl-role"
+  type          = "STANDARD"
+}
+
+resource "aws_eks_access_policy_association" "build_admin_access" {
+  cluster_name  = module.eks.cluster_name
+  principal_arn = "arn:aws:iam::116981792309:role/build-kubectl-role"
+  policy_arn    = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
+
+  access_scope {
+    type = "cluster"
+  }
+
+  depends_on = [aws_eks_access_entry.build_role_entry]
 }
