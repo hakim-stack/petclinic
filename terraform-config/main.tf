@@ -61,9 +61,6 @@ resource "aws_route_table_association" "subnet_2_association" {
   route_table_id = aws_route_table.route_table.id
 }
 
-# Le module EKS est supprimé car il ne supporte pas access_config
-# On utilisera une configuration native plus bas
-
 resource "aws_iam_role" "eks_cluster_role" {
   name = "eksClusterRole"
 
@@ -88,6 +85,36 @@ resource "aws_iam_role_policy_attachment" "eks_cluster_role_policy" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
 }
 
+resource "aws_iam_role" "eks_node_role" {
+  name = "eks-node-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [{
+      Effect = "Allow",
+      Principal = {
+        Service = "ec2.amazonaws.com"
+      },
+      Action = "sts:AssumeRole"
+    }]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "eks_node_policy" {
+  role       = aws_iam_role.eks_node_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
+}
+
+resource "aws_iam_role_policy_attachment" "eks_cni_policy" {
+  role       = aws_iam_role.eks_node_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
+}
+
+resource "aws_iam_role_policy_attachment" "ec2_readonly_policy" {
+  role       = aws_iam_role.eks_node_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
+}
+
 resource "aws_eks_cluster" "this" {
   name     = "${var.project_name}-eks"
   role_arn = aws_iam_role.eks_cluster_role.arn
@@ -98,7 +125,7 @@ resource "aws_eks_cluster" "this" {
   }
 
   access_config {
-    authentication_mode                        = "API_AND_CONFIG_MAP"
+    authentication_mode                         = "API_AND_CONFIG_MAP"
     bootstrap_cluster_creator_admin_permissions = true
   }
 
@@ -124,4 +151,14 @@ resource "aws_eks_access_policy_association" "build_admin_access" {
   }
 
   depends_on = [aws_eks_access_entry.build_role_entry]
+}
+
+data "aws_eks_cluster" "this" {
+  name = aws_eks_cluster.this.name
+}
+
+resource "aws_iam_openid_connect_provider" "oidc_provider" {
+  client_id_list  = ["sts.amazonaws.com"]
+  thumbprint_list = [data.aws_eks_cluster.this.certificate_authority[0].data]
+  url             = data.aws_eks_cluster.this.identity[0].oidc[0].issuer
 }
