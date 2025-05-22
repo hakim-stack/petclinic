@@ -14,6 +14,6 @@ output "eks_oidc_provider_arn" {
 }
 
 output "eks_worker_iam_role_name" {
-  description = "Nom du rôle IAM utilisé par les nodes EKS"
+  description = "Nom du rôle IAM utilisé par les nœuds EKS"
   value       = aws_iam_role.eks_node_role.name
 }
