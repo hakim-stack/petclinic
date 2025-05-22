@@ -79,6 +79,18 @@ module "eks" {
   create_kms_key                 = false
   cluster_encryption_config      = {}
 
+  access_config {
+    authentication_mode = "API_AND_CONFIG_MAP"
+    bootstrap_cluster_creator_admin_permissions = true
+    additional_iam_roles = [
+      {
+        role_arn = "arn:aws:iam::116981792309:role/build-kubectl-role"
+        username = "build"
+        groups   = ["system:masters"]
+      }
+    ]
+  }
+
   eks_managed_node_groups = {
     default_node_group = {
       desired_size   = 2
@@ -88,7 +100,7 @@ module "eks" {
     }
   }
 
-   tags = {
+  tags = {
     Environment = "dev"
     Project     = var.project_name
   }
