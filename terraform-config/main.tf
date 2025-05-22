@@ -105,3 +105,10 @@ module "eks" {
     Project     = var.project_name
   }
 }
+
+resource "aws_iam_role_policy_attachment" "build_kubectl_admin_policy" {
+  role       = "build-kubectl-role"
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSClusterAdminPolicy"
+
+  depends_on = [module.eks]
+}
