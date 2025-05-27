@@ -17,34 +17,34 @@ phases:
 
   pre_build:
     commands:
-      # Partie APP
       - echo "🔨 [APP] Vérifie si le repo ECR existe..."
       - |
         aws ecr describe-repositories --repository-names petclinic --region eu-west-3 || \
         aws ecr create-repository --repository-name petclinic --region eu-west-3
-      # Partie INFRA
       - echo "🔐 [INFRA] Connexion à AWS ECR pour récupérer les permissions"
       - aws sts get-caller-identity
 
   build:
     commands:
-      # Partie APP
       - echo "🔨 [APP] Compilation et Dockerisation de chaque microservice"
       - chmod +x push-ecr.sh
       - ./push-ecr.sh
-      # Partie INFRA (toujours depuis la racine, on va dans terraform-config)
-      - echo "⚙️ [INFRA] Initialisation de Terraform..."
-      - cd terraform-config && terraform init
-      - echo "📦 [INFRA] Planification de l'infrastructure..."
-      - cd terraform-config && terraform plan
-      - echo "🚀 [INFRA] Déploiement de l'infrastructure..."
-      - cd terraform-config && terraform apply -auto-approve
+      - |
+        echo "⚙️ [INFRA] Initialisation de Terraform..."
+        cd terraform-config
+        terraform init
+        echo "📦 [INFRA] Planification de l'infrastructure..."
+        terraform plan
+        echo "🚀 [INFRA] Déploiement de l'infrastructure..."
+        terraform apply -auto-approve
 
   post_build:
     commands:
-      - echo "✅ [INFRA] Terraform apply terminé"
-      - echo "📤 [INFRA] Export des outputs utiles..."
-      - cd terraform-config && terraform output
+      - |
+        echo "✅ [INFRA] Terraform apply terminé"
+        echo "📤 [INFRA] Export des outputs utiles..."
+        cd terraform-config
+        terraform output
 
 artifacts:
   files:
