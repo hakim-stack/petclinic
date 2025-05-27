@@ -25,30 +25,26 @@ phases:
       # Partie INFRA
       - echo "🔐 [INFRA] Connexion à AWS ECR pour récupérer les permissions"
       - aws sts get-caller-identity
-      - cd terraform-config
 
   build:
     commands:
       # Partie APP
       - echo "🔨 [APP] Compilation et Dockerisation de chaque microservice"
-      - cd ..
       - chmod +x push-ecr.sh
       - ./push-ecr.sh
-      # Partie INFRA
-      - cd terraform-config
+      # Partie INFRA (toujours depuis la racine, on va dans terraform-config)
       - echo "⚙️ [INFRA] Initialisation de Terraform..."
-      - terraform init
+      - cd terraform-config && terraform init
       - echo "📦 [INFRA] Planification de l'infrastructure..."
-      - terraform plan
+      - cd terraform-config && terraform plan
       - echo "🚀 [INFRA] Déploiement de l'infrastructure..."
-      - terraform apply -auto-approve
+      - cd terraform-config && terraform apply -auto-approve
 
   post_build:
     commands:
-      - cd terraform-config
       - echo "✅ [INFRA] Terraform apply terminé"
       - echo "📤 [INFRA] Export des outputs utiles..."
-      - terraform output
+      - cd terraform-config && terraform output
 
 artifacts:
   files:
