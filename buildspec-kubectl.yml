@@ -49,7 +49,16 @@ phases:
           sleep 10
         done
 
-      - echo "🚀 Déploiement des ressources Kubernetes"
+      - echo "📥 Installation de cert-manager"
+      - kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.14.3/cert-manager.yaml
+      - echo "⏳ Attente des pods cert-manager..."
+      - kubectl wait --namespace cert-manager --for=condition=Available deployment/cert-manager --timeout=120s || true
+
+      - echo "🔐 Déploiement du ClusterIssuer et du Certificate"
+      - kubectl apply -f k8s-manifests/certs/cluster-issuer.yaml
+      - kubectl apply -f k8s-manifests/certs/certificate.yaml
+
+      - echo "🚀 Déploiement des ressources Kubernetes (manifests généraux)"
       - kubectl apply -f k8s-manifests/ -n petclinic
 
       - echo "🌐 Vérification de l'Ingress"
@@ -61,4 +70,3 @@ phases:
 artifacts:
   files:
     - '**/*'
-
