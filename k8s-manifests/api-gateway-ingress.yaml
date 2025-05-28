@@ -11,10 +11,10 @@ spec:
   ingressClassName: nginx
   tls:
     - hosts:
-        - api.petclinic-devops.fr
+        - petclinic-devops.fr
       secretName: tls-api-gateway
   rules:
-    - host: api.petclinic-devops.fr
+    - host: petclinic-devops.fr
       http:
         paths:
           - path: /
