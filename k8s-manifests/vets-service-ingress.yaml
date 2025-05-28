@@ -3,19 +3,19 @@ kind: Ingress
 metadata:
   name: vets-service-ingress
   namespace: petclinic
-  labels:
-    app: vets-service
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /$2
+    nginx.ingress.kubernetes.io/rewrite-target: /vets
 spec:
   ingressClassName: nginx
   rules:
-    - http:
+    - host: www.petclinic-devops.fr
+      http:
         paths:
-          - path: /api/vet(/|$)(.*)
+          - path: /api/vet
             pathType: Prefix
             backend:
               service:
                 name: vets-service
                 port:
                   number: 8083
+

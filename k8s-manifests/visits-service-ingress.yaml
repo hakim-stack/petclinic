@@ -6,16 +6,18 @@ metadata:
   labels:
     app: visits-service
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /$2
+    nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   ingressClassName: nginx
   rules:
-    - http:
+    - host: www.petclinic-devops.fr
+      http:
         paths:
-          - path: /api/visit(/|$)(.*)
+          - path: /pets/visits
             pathType: Prefix
             backend:
               service:
                 name: visits-service
                 port:
                   number: 8082
+

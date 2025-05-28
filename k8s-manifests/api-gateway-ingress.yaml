@@ -5,15 +5,22 @@ metadata:
   namespace: petclinic
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
+    cert-manager.io/cluster-issuer: letsencrypt-prod
 spec:
   ingressClassName: nginx
+  tls:
+    - hosts:
+        - www.petclinic-devops.fr
+      secretName: tls-petclinic-secret
   rules:
-    - http:
+    - host: www.petclinic-devops.fr
+      http:
         paths:
-        - pathType: Prefix
-          path: /
-          backend:
-            service:
-              name: api-gateway
-              port:
-                number: 8080
+          - pathType: Prefix
+            path: /
+            backend:
+              service:
+                name: api-gateway
+                port:
+                  number: 8080
+
