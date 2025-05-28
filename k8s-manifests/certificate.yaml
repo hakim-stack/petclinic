@@ -8,6 +8,6 @@ spec:
   issuerRef:
     name: letsencrypt-prod
     kind: ClusterIssuer
-  commonName: api.petclinic-devops.fr
+  commonName: petclinic-devops.fr
   dnsNames:
-    - api.petclinic-devops.fr
+    - petclinic-devops.fr
