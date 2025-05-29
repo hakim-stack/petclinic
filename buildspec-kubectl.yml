@@ -41,19 +41,22 @@ phases:
       - echo "⏳ Attente que cert-manager soit prêt..."
       - kubectl rollout status deploy/cert-manager -n cert-manager --timeout=300s || echo "⚠️ cert-manager pas encore prêt"
 
-      - echo "⏳ Attente que le webhook d'admission soit prêt..."
+      - echo "📥 Déploiement du ClusterIssuer"
+      - kubectl apply -f k8s-manifests/clusterissuer.yaml
+
+      - echo "⏳ Attente que le ClusterIssuer soit prêt..."
       - |
         for i in {1..30}; do
-          READY=$(kubectl get endpoints -n ingress-nginx ingress-nginx-controller-admission -o jsonpath='{.subsets[*].addresses[*].ip}')
-          if [ -n "$READY" ]; then
-            echo "✅ Webhook d'admission prêt !"
+          READY=$(kubectl get clusterissuer letsencrypt-prod -o jsonpath='{.status.conditions[?(@.type=="Ready")].status}')
+          if [ "$READY" == "True" ]; then
+            echo "✅ ClusterIssuer prêt"
             break
           fi
-          echo "⏳ En attente... ($i/30)"
+          echo "⏳ Attente... ($i/30)"
           sleep 10
         done
 
-      - echo "🚀 Déploiement des ressources Kubernetes"
+      - echo "🚀 Déploiement des autres ressources Kubernetes"
       - kubectl apply -f k8s-manifests/ -n petclinic
 
       - echo "🌐 Vérification de l'Ingress"
