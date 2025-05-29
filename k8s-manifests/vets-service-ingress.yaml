@@ -4,7 +4,7 @@ metadata:
   name: vets-service-ingress
   namespace: petclinic
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /vet
+    nginx.ingress.kubernetes.io/rewrite-target: /vets
 spec:
   ingressClassName: nginx
   rules:
