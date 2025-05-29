@@ -4,19 +4,14 @@ metadata:
   name: api-gateway-ingress
   namespace: petclinic
   annotations:
-    nginx.ingress.kubernetes.io/ssl-redirect: "true"
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   ingressClassName: nginx
-  tls:
-    - hosts:
-        - www.petclinic-devops.fr
   rules:
-    - host: www.petclinic-devops.fr
-      http:
+    - http:
         paths:
-          - path: /
-            pathType: Prefix
+          - pathType: Prefix
+            path: /
             backend:
               service:
                 name: api-gateway
