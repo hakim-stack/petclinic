@@ -1,26 +1,19 @@
-apiVersion: networking.k8s.io/v1
+apiVersion: networking.k8s.io/v1 
 kind: Ingress
 metadata:
   name: api-gateway-ingress
   namespace: petclinic
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
-    cert-manager.io/cluster-issuer: letsencrypt-prod
 spec:
   ingressClassName: nginx
-  tls:
-    - hosts:
-        - www.petclinic-devops.fr
-      secretName: tls-petclinic-secret
   rules:
-    - host: www.petclinic-devops.fr
-      http:
+    - http:
         paths:
-          - pathType: Prefix
-            path: /
-            backend:
-              service:
-                name: api-gateway
-                port:
-                  number: 8080
-
+        - pathType: Prefix
+          path: /
+          backend:
+            service:
+              name: api-gateway
+              port:
+                number: 8080
