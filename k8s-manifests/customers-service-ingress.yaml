@@ -5,10 +5,15 @@ metadata:
   namespace: petclinic
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /owners
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
 spec:
   ingressClassName: nginx
+  tls:
+    - hosts:
+        - www.petclinic-devops.fr
   rules:
-    - http:
+    - host: www.petclinic-devops.fr
+      http:
         paths:
           - path: /api/customer
             pathType: Prefix
