@@ -3,15 +3,12 @@ kind: Ingress
 metadata:
   name: customers-service-ingress
   namespace: petclinic
-  labels:
-    app: customers-service
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /owners
 spec:
   ingressClassName: nginx
   rules:
-    - host: www.petclinic-devops.fr
-      http:
+    - http:
         paths:
           - path: /api/customer
             pathType: Prefix
@@ -20,4 +17,3 @@ spec:
                 name: customers-service
                 port:
                   number: 8081
-
