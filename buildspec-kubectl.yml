@@ -35,6 +35,12 @@ phases:
           echo "✅ Contrôleur Ingress NGINX déjà présent"
         fi
 
+      - echo "📥 Installation de cert-manager"
+      - kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.14.2/cert-manager.yaml
+
+      - echo "⏳ Attente que cert-manager soit prêt..."
+      - kubectl rollout status deploy/cert-manager -n cert-manager --timeout=300s || echo "⚠️ cert-manager pas encore prêt"
+
       - echo "⏳ Attente que le webhook d'admission soit prêt..."
       - |
         for i in {1..30}; do
@@ -59,4 +65,3 @@ phases:
 artifacts:
   files:
     - '**/*'
-
