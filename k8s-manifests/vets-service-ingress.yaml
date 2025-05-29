@@ -8,8 +8,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-    - host: www.petclinic-devops.fr
-      http:
+    - http:
         paths:
           - path: /api/vet
             pathType: Prefix
@@ -18,4 +17,3 @@ spec:
                 name: vets-service
                 port:
                   number: 8083
-
