@@ -186,3 +186,25 @@ resource "aws_iam_openid_connect_provider" "oidc_provider" {
   url             = aws_eks_cluster.this.identity[0].oidc[0].issuer
 }
 
+resource "aws_iam_policy" "secrets_manager_access" {
+  name        = "SecretsManagerPetclinicPolicy"
+  description = "Allow EKS nodes to get the petclinic DB secret"
+  policy      = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Action = [
+          "secretsmanager:GetSecretValue"
+        ],
+        Resource = "arn:aws:secretsmanager:eu-west-3:116981792309:secret:petclinic-db-secret-*"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_policy_attachment" "attach_secrets_policy_to_node_role" {
+  name       = "AttachSecretsToEKSNodeRole"
+  roles      = [aws_iam_role.eks_node_role.name]
+  policy_arn = aws_iam_policy.secrets_manager_access.arn
+}
