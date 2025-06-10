@@ -40,3 +40,10 @@ variable "availability_zone_2" {
   default     = "eu-west-3b"
 }
 
+variable "eks_security_group_id" {
+  description = "Optionnel : ID d’un groupe de sécurité EKS à utiliser si déjà existant (sinon créé par Terraform)"
+  type        = string
+  default     = ""
+}
+
+
