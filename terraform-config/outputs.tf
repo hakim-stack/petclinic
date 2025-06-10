@@ -17,3 +17,8 @@ output "eks_worker_iam_role_name" {
   description = "Nom du rôle IAM utilisé par les nœuds EKS"
   value       = aws_iam_role.eks_node_role.name
 }
+
+output "eks_security_group_id" {
+  description = "ID du groupe de sécurité utilisé pour le cluster EKS"
+  value       = aws_security_group.eks_security_group.id
+}
