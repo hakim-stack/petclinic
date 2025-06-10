@@ -189,7 +189,7 @@ resource "aws_eks_node_group" "main" {
     min_size     = 1
   }
 
-  instance_types = ["t3.medium"] # tu peux changer le type d'instance ici si besoin
+  instance_types = ["t3.medium"]
   ami_type       = "AL2_x86_64"
   disk_size      = 20
 
@@ -226,27 +226,4 @@ resource "aws_iam_openid_connect_provider" "oidc_provider" {
   client_id_list  = ["sts.amazonaws.com"]
   thumbprint_list = ["9e99a48a9960b14926bb7f3b02e22da0afd40b58"]
   url             = aws_eks_cluster.this.identity[0].oidc[0].issuer
-}
-
-resource "aws_iam_policy" "secrets_manager_access" {
-  name        = "SecretsManagerPetclinicPolicy"
-  description = "Allow EKS nodes to get the petclinic DB secret"
-  policy      = jsonencode({
-    Version = "2012-10-17",
-    Statement = [
-      {
-        Effect = "Allow",
-        Action = [
-          "secretsmanager:GetSecretValue"
-        ],
-        Resource = "arn:aws:secretsmanager:eu-west-3:116981792309:secret:petclinic-db-secret-*"
-      }
-    ]
-  })
-}
-
-resource "aws_iam_policy_attachment" "attach_secrets_policy_to_node_role" {
-  name       = "AttachSecretsToEKSNodeRole"
-  roles      = [aws_iam_role.eks_node_role.name]
-  policy_arn = aws_iam_policy.secrets_manager_access.arn
 }
