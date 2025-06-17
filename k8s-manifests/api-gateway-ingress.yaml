@@ -24,4 +24,25 @@ spec:
                 name: api-gateway
                 port:
                   number: 8080
-          # Rajoute ici tous les paths nécessaires pour l’app…
+          - pathType: Prefix
+            path: /vets
+            backend:
+              service:
+                name: api-gateway
+                port:
+                  number: 8080
+          - pathType: Prefix
+            path: /pets
+            backend:
+              service:
+                name: api-gateway
+                port:
+                  number: 8080
+          - pathType: Prefix
+            path: /actuator
+            backend:
+              service:
+                name: api-gateway
+                port:
+                  number: 8080
+          # Ajoute ici d'autres paths utiles à ton app Spring si tu en as
