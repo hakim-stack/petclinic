@@ -11,9 +11,17 @@ spec:
     - http:
         paths:
           - pathType: Prefix
-            path: /
+            path: /api
             backend:
               service:
                 name: api-gateway
                 port:
                   number: 8080
+          - pathType: Prefix
+            path: /owners
+            backend:
+              service:
+                name: api-gateway
+                port:
+                  number: 8080
+          # Rajoute ici tous les paths nécessaires pour l’app…
