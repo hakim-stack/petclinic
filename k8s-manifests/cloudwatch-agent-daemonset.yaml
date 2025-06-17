@@ -1,14 +1,14 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: amazon-cloudwatch
+  name: petclinic
 
 ---
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: cloudwatch-agent
-  namespace: amazon-cloudwatch
+  namespace: petclinic
 
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -38,14 +38,14 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: cloudwatch-agent
-    namespace: amazon-cloudwatch
+    namespace: petclinic
 
 ---
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   name: cloudwatch-agent
-  namespace: amazon-cloudwatch
+  namespace: petclinic
   labels:
     k8s-app: cloudwatch-agent
 spec:
@@ -112,7 +112,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: cloudwatch-agent-config
-  namespace: amazon-cloudwatch
+  namespace: petclinic
 data:
   cwagentconfig.json: |
     {
