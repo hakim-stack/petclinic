@@ -11,38 +11,9 @@ spec:
     - http:
         paths:
           - pathType: Prefix
-            path: /api
+            path: /
             backend:
               service:
                 name: api-gateway
                 port:
                   number: 8080
-          - pathType: Prefix
-            path: /owners
-            backend:
-              service:
-                name: api-gateway
-                port:
-                  number: 8080
-          - pathType: Prefix
-            path: /vets
-            backend:
-              service:
-                name: api-gateway
-                port:
-                  number: 8080
-          - pathType: Prefix
-            path: /pets
-            backend:
-              service:
-                name: api-gateway
-                port:
-                  number: 8080
-          - pathType: Prefix
-            path: /actuator
-            backend:
-              service:
-                name: api-gateway
-                port:
-                  number: 8080
-          # Ajoute ici d'autres paths utiles à ton app Spring si tu en as
