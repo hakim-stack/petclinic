@@ -6,6 +6,16 @@ resource "aws_vpc" "main" {
   }
 }
 
+resource "aws_iam_role_policy_attachment" "cloudwatch_agent_policy" {
+  role       = aws_iam_role.eks_node_role.name
+  policy_arn = "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"
+}
+
+resource "aws_iam_role_policy_attachment" "xray_policy" {
+  role       = aws_iam_role.eks_node_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AWSXRayDaemonWriteAccess"
+}
+
 resource "aws_security_group" "eks_security_group" {
   name        = "${var.project_name}-eks-sg"
   description = "Security group for EKS cluster"
