@@ -46,21 +46,4 @@ variable "eks_security_group_id" {
   default     = ""
 }
 
-variable "domain_name" {
-  description = "Nom de domaine pour le certificat SSL (ex: monsite.com)"
-  type        = string
-}
-
-variable "zone_id" {
-  description = "ID de la zone hébergée Route 53 (ex: Z1234567ABCDEF)"
-  type        = string
-}
-
-variable "region" {
-  description = "Région AWS (ex: eu-west-3)"
-  type        = string
-  default     = "eu-west-3"
-}
-
-
 
