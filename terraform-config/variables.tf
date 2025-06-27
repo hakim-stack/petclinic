@@ -17,15 +17,27 @@ variable "vpc_cidr" {
 }
 
 variable "subnet1_cidr" {
-  description = "CIDR pour le subnet 1"
+  description = "CIDR pour le subnet public 1"
   type        = string
-  default     = "10.0.0.0/20"
+  default     = "10.0.1.0/24"
 }
 
 variable "subnet2_cidr" {
-  description = "CIDR pour le subnet 2"
+  description = "CIDR pour le subnet public 2"
   type        = string
-  default     = "10.0.16.0/20"
+  default     = "10.0.2.0/24"
+}
+
+variable "private_subnet1_cidr" {
+  description = "CIDR pour le subnet privé 1"
+  type        = string
+  default     = "10.0.11.0/24"
+}
+
+variable "private_subnet2_cidr" {
+  description = "CIDR pour le subnet privé 2"
+  type        = string
+  default     = "10.0.12.0/24"
 }
 
 variable "availability_zone_1" {
@@ -46,4 +58,8 @@ variable "eks_security_group_id" {
   default     = ""
 }
 
-
+variable "domain_name" {
+  description = "Nom de domaine pour ACM"
+  type        = string
+  default     = "ton.domaine.com"
+}
