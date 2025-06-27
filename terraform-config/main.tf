@@ -6,6 +6,51 @@ resource "aws_vpc" "main" {
   }
 }
 
+resource "aws_security_group" "eks_security_group" {
+  name        = "${var.project_name}-eks-sg"
+  description = "Security group for EKS cluster"
+  vpc_id      = aws_vpc.main.id
+
+  # Autoriser tout le trafic interne au VPC (pour que les nodes/pods/EKS se parlent)
+  ingress {
+    description = "Allow all traffic from within the VPC"
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = [var.vpc_cidr]
+  }
+
+  # HTTP(S) pour exposer les applis (à affiner selon ton besoin)
+  ingress {
+    description = "Allow HTTP"
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    description = "Allow HTTPS"
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  # Sortie vers Internet pour tout le monde
+  egress {
+    description = "Allow all outbound traffic"
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "${var.project_name}-eks-sg"
+  }
+}
+
 resource "aws_subnet" "subnet_1" {
   vpc_id                  = aws_vpc.main.id
   cidr_block              = var.subnet1_cidr
