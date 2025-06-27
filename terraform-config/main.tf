@@ -6,49 +6,6 @@ resource "aws_vpc" "main" {
   }
 }
 
-
-resource "aws_security_group" "eks_security_group" {
-  name        = "${var.project_name}-eks-sg"
-  description = "Security group for EKS cluster"
-  vpc_id      = aws_vpc.main.id
-
-  ingress {
-    description      = "Allow all traffic from within the VPC"
-    from_port        = 0
-    to_port          = 0
-    protocol         = "-1"
-    cidr_blocks      = [var.vpc_cidr]
-  }
-
-  ingress {
-    description = "Allow HTTP"
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  ingress {
-    description = "Allow HTTPS"
-    from_port   = 443
-    to_port     = 443
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  egress {
-    description = "Allow all outbound traffic"
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  tags = {
-    Name = "${var.project_name}-eks-sg"
-  }
-}
-
 resource "aws_subnet" "subnet_1" {
   vpc_id                  = aws_vpc.main.id
   cidr_block              = var.subnet1_cidr
@@ -69,6 +26,26 @@ resource "aws_subnet" "subnet_2" {
   }
 }
 
+resource "aws_subnet" "private_subnet_1" {
+  vpc_id                  = aws_vpc.main.id
+  cidr_block              = var.private_subnet1_cidr
+  availability_zone       = var.availability_zone_1
+  map_public_ip_on_launch = false
+  tags = {
+    Name = "${var.project_name}-private-subnet-1"
+  }
+}
+
+resource "aws_subnet" "private_subnet_2" {
+  vpc_id                  = aws_vpc.main.id
+  cidr_block              = var.private_subnet2_cidr
+  availability_zone       = var.availability_zone_2
+  map_public_ip_on_launch = false
+  tags = {
+    Name = "${var.project_name}-private-subnet-2"
+  }
+}
+
 resource "aws_internet_gateway" "internet_gw" {
   vpc_id = aws_vpc.main.id
   tags = {
@@ -83,12 +60,6 @@ resource "aws_route_table" "route_table" {
     cidr_block = "0.0.0.0/0"
     gateway_id = aws_internet_gateway.internet_gw.id
   }
-
-  route {
-    cidr_block = var.vpc_cidr
-    gateway_id = "local"
-  }
-
   tags = {
     Name = "${var.project_name}-route-table"
   }
@@ -98,10 +69,45 @@ resource "aws_route_table_association" "subnet_1_association" {
   subnet_id      = aws_subnet.subnet_1.id
   route_table_id = aws_route_table.route_table.id
 }
-
 resource "aws_route_table_association" "subnet_2_association" {
   subnet_id      = aws_subnet.subnet_2.id
   route_table_id = aws_route_table.route_table.id
+}
+
+resource "aws_eip" "nat_eip" {
+  vpc = true
+  tags = {
+    Name = "${var.project_name}-nat-eip"
+  }
+}
+
+resource "aws_nat_gateway" "nat_gw" {
+  allocation_id = aws_eip.nat_eip.id
+  subnet_id     = aws_subnet.subnet_1.id # NAT dans un subnet public
+  tags = {
+    Name = "${var.project_name}-nat-gw"
+  }
+  depends_on = [aws_internet_gateway.internet_gw]
+}
+
+resource "aws_route_table" "private_route_table" {
+  vpc_id = aws_vpc.main.id
+  route {
+    cidr_block     = "0.0.0.0/0"
+    nat_gateway_id = aws_nat_gateway.nat_gw.id
+  }
+  tags = {
+    Name = "${var.project_name}-private-route-table"
+  }
+}
+
+resource "aws_route_table_association" "private_subnet_1_association" {
+  subnet_id      = aws_subnet.private_subnet_1.id
+  route_table_id = aws_route_table.private_route_table.id
+}
+resource "aws_route_table_association" "private_subnet_2_association" {
+  subnet_id      = aws_subnet.private_subnet_2.id
+  route_table_id = aws_route_table.private_route_table.id
 }
 
 resource "aws_iam_role" "eks_cluster_role" {
